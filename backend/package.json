@@ -1,0 +1,35 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Capstone project(ShopPlusPlus)",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ratan1221/Capstone_Project.git"
+  },
+  "author": "Ratan Kumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ratan1221/Capstone_Project/issues"
+  },
+  "homepage": "https://github.com/ratan1221/Capstone_Project#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.7",
+    "paypal-rest-sdk": "^1.8.1"
+  }
+}
