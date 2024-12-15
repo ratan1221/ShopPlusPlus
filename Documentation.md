@@ -35,7 +35,8 @@ ShopPlusPlus is a full-stack e-commerce platform built with React, Node.js Expre
 - Order status updates
 - Product inventory tracking
 - Image upload functionality
-- Dashboard analytics
+- Dashboard analytics--Coming Soon
+- Features Page-Coming Soon
 
 ## Technology Stack
 
@@ -55,6 +56,10 @@ ShopPlusPlus is a full-stack e-commerce platform built with React, Node.js Expre
 - JWT for authentication
 - Cloudinary for image storage
 - PayPal SDK for payments
+
+(Use the following for Paypal Payment Dummy Account(sandobox))
+email: [sb-wp96q34470267@personal.example.com]
+password:pV&@sjg3
 
 ## Prerequisites
 
@@ -131,7 +136,6 @@ npm install
 please install shadcn package:-
 npx shadcn@latest init
 
-
 ## Core Features Implementation
 
 ### Authentication System
@@ -156,3 +160,7 @@ npx shadcn@latest init
 - Order processing
 - Address management
 - PayPal integration
+
+(Use the following for Paypal Payment- Dummy Account(sandobox))
+email: [sb-wp96q34470267@personal.example.com]
+password:pV&@sjg3

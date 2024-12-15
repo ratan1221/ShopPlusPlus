@@ -19,7 +19,7 @@ import wishlistRouter from './routes/shop/wishlist-route.js';
 
 dotenv.config();
 try {
-    await validateEnvironmentVariables();
+    validateEnvironmentVariables();
 } catch (error) {
     console.error('❌ Startup validation failed:', error);
     process.exit(1);
