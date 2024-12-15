@@ -2,41 +2,21 @@ import { imageUploadUtils } from "../../helpers/cloudinary.js";
 import Product from "../../models/Product.js";
 
 //image upload logic
-
 export const handleImageUpload = async (req, res) => {
     try {
-        // Validate request
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                message: "No file uploaded"
-            });
-        }
-
-        // Convert file to base64
         const b64 = Buffer.from(req.file.buffer).toString("base64");
-        const url = `data:${req.file.mimetype};base64,${b64}`;
+        const url = "data:" + req.file.mimetype + ";base64," + b64;
+        const result = await imageUploadUtils(url);
 
-        // Upload to Cloudinary
-        const uploadResult = await imageUploadUtils(url);
-
-        if (!uploadResult.success) {
-            return res.status(400).json({
-                success: false,
-                message: uploadResult.message
-            });
-        }
-
-        return res.status(200).json({
+        res.json({
             success: true,
-            result: uploadResult.result
+            result,
         });
-
     } catch (error) {
-        console.error('Image upload error:', error);
-        return res.status(500).json({
+        console.log(error);
+        res.json({
             success: false,
-            message: "Error uploading image to Cloudinary"
+            message: "Error occured",
         });
     }
 };

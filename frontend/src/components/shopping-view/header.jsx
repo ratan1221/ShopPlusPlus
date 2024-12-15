@@ -1,4 +1,4 @@
-import { CircleUserRound, Heart, House, LogIn, LogOut, Menu, ShoppingCart, User } from "lucide-react";
+import { CircleUserRound, House, LogOut, Menu, ShoppingCart } from "lucide-react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -8,16 +8,17 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { logoutUser, resetTokenAndCredentials } from "@/store/auth-slice";
 import UserCartWrapper from "./cart-wrapper";
-import WishlistWrapper from "./wishlist-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
-import { fetchWishlistItems } from "@/store/shop/wishlist-slice";
 import { Label } from "../ui/label";
 
+
 function MenuItems() {
+
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+
 
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem('filters');
@@ -45,106 +46,65 @@ function MenuItems() {
 };
 
 function HeaderRightContent() {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector(state => state.shopCart);
-  const { items: wishlistItems } = useSelector(state => state.wishlist);
   const [openCartSheet, setOpenCartSheet] = useState(false);
-  const [openWishlistSheet, setOpenWishlistSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (user) {
-      dispatch(fetchCartItems(user.id));
-      dispatch(fetchWishlistItems(user.id));
-    }
-  }, [dispatch, user]);
-
   function handleLogout() {
+    // dispatch(logoutUser()); 
     dispatch(resetTokenAndCredentials());
     sessionStorage.clear();
     navigate('/auth/login');
   };
 
-  return (
-    <div className="flex items-center gap-2">
-      <Sheet open={openWishlistSheet} onOpenChange={setOpenWishlistSheet}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          onClick={() => setOpenWishlistSheet(true)}
-        >
-          <Heart className="h-5 w-5" />
-          {wishlistItems?.length > 0 && (
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-              {wishlistItems.length}
-            </span>
-          )}
-        </Button>
-        <WishlistWrapper setOpenWishlistSheet={setOpenWishlistSheet}
-          setOpenCartSheet={setOpenCartSheet}
-        />
-      </Sheet>
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id))
+  }, [dispatch])
 
-      <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
-        <Button
-          variant="outline"
+  return (
+    <div className="flex lg:items-center lg:flex-row flex-col gap-4">
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button onClick={() => setOpenCartSheet(true)} variant="outline"
           size="icon"
-          className="relative"
-          onClick={() => setOpenCartSheet(true)}
-        >
-          <ShoppingCart className="h-5 w-5" />
-          {cartItems?.items?.length > 0 && (
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-              {cartItems.items.length}
-            </span>
-          )}
+          className='relative'>
+          <ShoppingCart className="w-6 h-6" />
+          <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
+            {cartItems?.items?.length || 0}
+          </span>
+          <span className="sr-only">User Cart</span>
         </Button>
         <UserCartWrapper
           setOpenCartSheet={setOpenCartSheet}
-          cartItems={cartItems?.items || []}
-        />
+          cartItems={cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
       </Sheet>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black cursor-pointer">
             <AvatarFallback className="bg-black text-white font-extrabold">
-              {isAuthenticated ? (
-                user?.userName?.[0]?.toUpperCase()
-              ) : (
-                <User className="h-5 w-5" />
-              )}
+              {user?.userName[0].toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="right" className="w-56">
-          {isAuthenticated ? (
-            <>
-              <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/shop/account')}>
-                <CircleUserRound className="mr-3 h-6 w-6" />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-6 w-6" />
-                Logout
-              </DropdownMenuItem>
-            </>
-          ) : (
-            <DropdownMenuItem onClick={() => navigate('/auth/login')}>
-              <LogIn className="mr-3 h-6 w-6" />
-              Login
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuLabel>Logged In as {user?.userName}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate('/shop/account')} >
+            <CircleUserRound className="mr-2 h-6 w-6" />
+            Account
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout} >
+            <LogOut className="mr-2 h-6 w-6" />
+            Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }
 
 function ShoppingHeader() {

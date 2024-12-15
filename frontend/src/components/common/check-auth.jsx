@@ -1,48 +1,61 @@
-// CheckAuth.jsx
-import { useEffect } from "react";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import PropTypes from 'prop-types';
+import { Navigate, useLocation } from "react-router-dom";
 
-function CheckAuth({ isAuthenticated, user, children, requireAuth = false }) {
-  const location = useLocation();
-  const navigate = useNavigate();
+function CheckAuth({ isAuthenticated, user, children }) {
+    const location = useLocation();
 
-  useEffect(() => {
-    // Handle unauthorized access attempts
-    if (!isAuthenticated && requireAuth) {
-      sessionStorage.setItem("redirectAfterLogin", location.pathname);
-      navigate("/auth/login", { replace: true });
-      return;
+    console.log(location.pathname, isAuthenticated);
+
+    if (location.pathname === "/") {
+        if (!isAuthenticated) {
+            return <Navigate to="/auth/login" />;
+        } else {
+            if (user?.role === "admin") {
+                return <Navigate to="/admin/dashboard" />;
+            } else {
+                return <Navigate to="/shop/home" />;
+            }
+        }
     }
 
-    // Redirect admin from shop routes
-    if (isAuthenticated && user?.role === "admin" && location.pathname.startsWith("/shop")) {
-      navigate("/admin/dashboard", { replace: true });
-      return;
+    if (
+        !isAuthenticated &&
+        !(
+            location.pathname.includes("/login") ||
+            location.pathname.includes("/register")
+        )
+    ) {
+        return <Navigate to="/auth/login" />;
     }
 
-    // Prevent non-admin access to admin routes
-    if (isAuthenticated && user?.role !== "admin" && location.pathname.startsWith("/admin")) {
-      navigate("/unauth-page", { replace: true });
-      return;
+    if (
+        isAuthenticated &&
+        (location.pathname.includes("/login") ||
+            location.pathname.includes("/register"))
+    ) {
+        if (user?.role === "admin") {
+            return <Navigate to="/admin/dashboard" />;
+        } else {
+            return <Navigate to="/shop/home" />;
+        }
     }
-  }, [isAuthenticated, user, location.pathname, navigate, requireAuth]);
 
-  // Show loading or redirect for unauthenticated users
-  if (!isAuthenticated && requireAuth) {
-    return <Navigate to="/auth/login" state={{ from: location }} replace />;
-  }
+    if (
+        isAuthenticated &&
+        user?.role !== "admin" &&
+        location.pathname.includes("admin")
+    ) {
+        return <Navigate to="/unauth-page" />;
+    }
 
-  return children;
+    if (
+        isAuthenticated &&
+        user?.role === "admin" &&
+        location.pathname.includes("shop")
+    ) {
+        return <Navigate to="/admin/dashboard" />;
+    }
+
+    return <>{children}</>;
 }
-
-CheckAuth.propTypes = {
-  isAuthenticated: PropTypes.bool.isRequired,
-  user: PropTypes.shape({
-    role: PropTypes.string,
-  }),
-  children: PropTypes.node.isRequired,
-  requireAuth: PropTypes.bool
-};
 
 export default CheckAuth;

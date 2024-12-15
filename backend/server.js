@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { validateEnvironmentVariables } from './helpers/startup-checks.js'
+dotenv.config();
 import express from 'express'
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
@@ -14,16 +14,7 @@ import adminOrderRouter from './routes/admin/order-routes.js';
 import shopSearchRouter from './routes/shop/search-route.js';
 import shopReviewRouter from './routes/shop/review-route.js';
 import commonFeatureRouter from './routes/common/features-route.js';
-import wishlistRouter from './routes/shop/wishlist-route.js';
 
-
-dotenv.config();
-try {
-    validateEnvironmentVariables();
-} catch (error) {
-    console.error('❌ Startup validation failed:', error);
-    process.exit(1);
-}
 
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -32,7 +23,7 @@ mongoose.connect(process.env.MONGODB_URI)
         console.log("Database not connected !!", error));
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 app.use(
     cors({
@@ -61,7 +52,6 @@ app.use('/api/shop/order', shopOrderRouter);
 app.use('/api/shop/search', shopSearchRouter);
 app.use('/api/shop/review', shopReviewRouter);
 app.use('/api/common/feature', commonFeatureRouter);
-app.use('/api/shop/wishlist', wishlistRouter);
 
 
 app.listen(PORT, () => {
